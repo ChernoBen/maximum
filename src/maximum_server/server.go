@@ -42,6 +42,8 @@ func (*server) SquareRoot(ctx context.Context, req *maximum_proto.SquareRootRequ
 		NumberRoot: math.Sqrt(float64(number)),
 	}, nil
 }
+
+//exemplo de metodo com tratamento de erro
 func (*server) FindMaximum(stream maximum_proto.CalculatorService_FindMaximumServer) error {
 	fmt.Println("Verifica maximo na stream")
 	maximum := int32(0)
