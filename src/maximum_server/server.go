@@ -1,13 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"maximum/src/maximum_proto"
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type server struct {
@@ -26,7 +30,18 @@ func main() {
 		log.Fatalf("Falha ao setar server: %v\n", err)
 	}
 }
-
+func (*server) SquareRoot(ctx context.Context, req *maximum_proto.SquareRootRequest) (*maximum_proto.SquareRootResponse, error) {
+	number := req.GetNumber()
+	if number < 0 {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			fmt.Sprintf("Numero negativo recebido: %v", number),
+		)
+	}
+	return &maximum_proto.SquareRootResponse{
+		NumberRoot: math.Sqrt(float64(number)),
+	}, nil
+}
 func (*server) FindMaximum(stream maximum_proto.CalculatorService_FindMaximumServer) error {
 	fmt.Println("Verifica maximo na stream")
 	maximum := int32(0)

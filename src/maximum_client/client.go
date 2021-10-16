@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func main() {
@@ -22,7 +24,29 @@ func main() {
 	if c != nil {
 		fmt.Println("Conexão com servidor criada com sucesso!")
 	}
-	doBiDiStreaming(c)
+	//doBiDiStreaming(c)
+	doErrorUnary(c)
+}
+
+func doErrorUnary(c maximum_proto.CalculatorServiceClient) {
+	number := int32(-36)
+	//criando request para unary
+	req, err := c.SquareRoot(context.Background(), &maximum_proto.SquareRootRequest{
+		Number: number,
+	})
+	if err != nil {
+		respError, ok := status.FromError(err)
+		if ok {
+			fmt.Println(respError.Message())
+			fmt.Println(respError.Code())
+			if respError.Code() == codes.InvalidArgument {
+				fmt.Println("Numero enviado é possivelmente negativo")
+			}
+		} else {
+			log.Fatalf("Erro interno: %v\n", err)
+		}
+	}
+	fmt.Printf("Raiz de %v é %v\n", number, req.GetNumberRoot())
 }
 
 func doBiDiStreaming(c maximum_proto.CalculatorServiceClient) {
@@ -34,7 +58,7 @@ func doBiDiStreaming(c maximum_proto.CalculatorServiceClient) {
 	waitch := make(chan struct{})
 	//envia goroutine
 	go func() {
-		numbers := []int32{1, 2, 3, 4, 5, 6, 8, 2}
+		numbers := []int32{5, 2, 6, 8, 7, 9, 8, 2}
 		for _, num := range numbers {
 			err := stream.Send(&maximum_proto.FindMaximumRequest{
 				Number: num,

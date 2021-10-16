@@ -11,6 +11,18 @@ message FindMaximumResponse{
     int32 maximum = 1;
 }
 
+message SquareRootRequest{
+    int32 number = 1;
+}
+
+message SquareRootResponse{
+    double number_root = 1;
+}
+
 service CalculatorService{
     rpc FindMaximum(stream FindMaximumRequest)returns(stream FindMaximumResponse){};
+    //manipulação de erros
+    //Esta feature irá lançar um erro se o numero passado for negativo
+    //O tipo do erro laçado será INVALID_ARGUMENT
+    rpc SquareRoot(SquareRootRequest)returns(SquareRootResponse){};
 }
