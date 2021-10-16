@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package src;
+option go_package="./src/maximum_proto";
+
+message FindMaximumRequest{
+    int32 number = 1;
+}
+
+message FindMaximumResponse{
+    int32 maximum = 1;
+}
+
+service CalculatorService{
+    rpc FindMaximum(stream FindMaximumRequest)returns(stream FindMaximumResponse){};
+}
