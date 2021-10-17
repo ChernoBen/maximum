@@ -11,6 +11,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 )
 
@@ -26,6 +27,7 @@ func main() {
 	log.Printf("Server running...\n")
 	s := grpc.NewServer()
 	maximum_proto.RegisterCalculatorServiceServer(s, &server{})
+	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Falha ao setar server: %v\n", err)
 	}
